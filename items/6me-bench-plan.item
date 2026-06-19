@@ -1,1 +1,25 @@
+ITEM: 6ME STATION 01
+TYPE: bench
+VERSION: raw-1
+
+# PURPOSE
+- basic station test
+- raw input → raw output
+
+# INPUTS
+? A
+? B
+? C
+
+# OUTPUTS
+! A
+! B
+! C
+
+# RULES
+& raw in → raw out
+& no logic
+& no correction
+
+END
 
