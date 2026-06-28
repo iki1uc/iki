@@ -1,86 +1,79 @@
 /* ===========================
-   NC-CORE.js
-   RAW • RAWATOR • WURMLOCH • TRANS_WARB • GATE-TECH
+   NC-MULTI + KlicK.me CODEC
    =========================== */
 
-// ---------- RAW: 4 Grundzustände ----------
-const RAW = {
-    1: { id: "RAW-01", name: "Wahrnehmen",   kern: "sensor",   kanal: 1 },
-    2: { id: "RAW-02", name: "Muster",       kern: "pattern",  kanal: 2 },
-    3: { id: "RAW-03", name: "Bewegung",     kern: "vector",   kanal: 3 },
-    4: { id: "RAW-04", name: "Nachhall",     kern: "echo",     kanal: 4 }
-};
+const NC_MULTI = {
+    slots: {},
 
-// ---------- TRANS_WARB: Physik-Übergänge ----------
-const TRANS_WARB = {
-    impulse(mass, velocity) {
-        return mass * velocity; // Impuls p = m * v
+    // Slot erzeugen
+    createSlot(id) {
+        if (!this.slots[id]) {
+            this.slots[id] = {
+                raw: null,
+                calc: null,
+                op: null,
+                text: "",
+                meta: { version: "KlicK.me-1.0", time: Date.now() }
+            };
+        }
+        return this.slots[id];
     },
-    damp(value) {
-        return value * 0.618; // Dämpfung (goldener Faktor)
+
+    // Slot laden
+    loadSlot(id) {
+        const data = localStorage.getItem("NC_SLOT_" + id);
+        if (data) {
+            this.slots[id] = JSON.parse(data);
+        } else {
+            this.createSlot(id);
+        }
+        return this.slots[id];
+    },
+
+    // Slot speichern
+    saveSlot(id) {
+        if (!this.slots[id]) return;
+        localStorage.setItem("NC_SLOT_" + id, JSON.stringify(this.slots[id]));
+    },
+
+    // Multi-Edit
+    setText(id, text) {
+        const slot = this.createSlot(id);
+        slot.text = text;
+        return slot;
+    },
+
+    // Multi-Calc (an nc-core.js gebunden)
+    setCalc(id, mass, velocity) {
+        const slot = this.createSlot(id);
+        if (window.NC) {
+            slot.raw  = window.NC.RAW[3];
+            slot.calc = window.NC.NC_GHOST_SCAN(mass, velocity);
+        }
+        return slot;
+    },
+
+    // Multi-OP
+    setOp(id, tag) {
+        const slot = this.createSlot(id);
+        slot.op = tag;
+        return slot;
+    },
+
+    // ---------- KlicK.me ENCODER ----------
+    encode(id) {
+        const slot = this.slots[id];
+        if (!slot) return null;
+        return btoa(JSON.stringify(slot)); // base64 pack
+    },
+
+    // ---------- KlicK.me DISASSEMBLER ----------
+    decode(encoded) {
+        const obj = JSON.parse(atob(encoded));
+        this.slots[obj.slot] = obj;
+        return obj;
     }
 };
 
-// ---------- RAWATOR: Bindet RAW an Energiezustand ----------
-const RAWATOR = {
-    bind(raw) {
-        return {
-            id: raw.id,
-            state: raw.kern,
-            energy: raw.kanal * 1.0
-        };
-    }
-};
-
-// ---------- WURMLOCH tmp-03: RAW → Impuls → Echo → Loop ----------
-const WURMLOCH_TMP3 = {
-    gate(raw, mass, velocity) {
-        const r = RAWATOR.bind(raw);
-        const p = TRANS_WARB.impulse(mass, velocity);
-        const echo = TRANS_WARB.damp(p);
-
-        return {
-            raw: r,
-            impulse: p,
-            echo: echo,
-            loop: echo > 0.1
-        };
-    }
-};
-
-// ---------- BENCH LOOP TEST ----------
-function NC_BENCH_LOOP_TEST(mass, velocity) {
-    const res = WURMLOCH_TMP3.gate(RAW[3], mass, velocity);
-    return {
-        ok: res.loop,
-        impulse: res.impulse,
-        echo: res.echo
-    };
-}
-
-// ---------- GHOST SCAN ----------
-function NC_GHOST_SCAN(mass, velocity) {
-    const bench = NC_BENCH_LOOP_TEST(mass, velocity);
-    return {
-        ghost: bench.echo > 0.05,
-        signal: bench.echo,
-        tag: bench.ok ? "LOOP-STABLE" : "LOOP-DECAY"
-    };
-}
-
-// ---------- ROOT-GATE ----------
-function NC_ROOT_GATE(rawValue){
-    window.location.href = "./LOCH/IN/RAW.html?raw=" + encodeURIComponent(rawValue);
-}
-
-// ---------- EXPORT (optional) ----------
-window.NC = {
-    RAW,
-    TRANS_WARB,
-    RAWATOR,
-    WURMLOCH_TMP3,
-    NC_BENCH_LOOP_TEST,
-    NC_GHOST_SCAN,
-    NC_ROOT_GATE
-};
-
+// global export
+window.KlicK = NC_MULTI;
