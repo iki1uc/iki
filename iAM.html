@@ -1,25 +1,51 @@
-<!-- UI-UPGRADE -->
+<!-- ===========================
+     NC ABSCHIEDS-SCREEN
+     =========================== -->
+
 <style>
-  .panel { border:1px solid #333; padding:12px; margin-bottom:12px; }
-  .title { font-weight:bold; margin-bottom:6px; }
+  #ncGoodbye {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, #001100, #000000);
+    color: #00ff88;
+    font-family: system-ui, sans-serif;
+    padding: 40px;
+    text-align: center;
+    display: none;
+  }
+  #ncGoodbye h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+  #ncGoodbye pre {
+    background: rgba(0,255,120,0.1);
+    padding: 16px;
+    border-radius: 8px;
+    display: inline-block;
+    text-align: left;
+  }
 </style>
 
-<div class="panel">
-  <div class="title">GHOST Monitor</div>
-  <pre id="ghostMon"></pre>
+<div id="ncGoodbye">
+  <h1>NC Abschieds‑Screen</h1>
+  <pre id="ncGoodbyeText"></pre>
 </div>
 
-<div class="panel">
-  <div class="title">2ME Universum</div>
-  <pre id="uni2me"></pre>
-</div>
+<script>
+function NC_ABSCHIED(){
+  const msg = {
+    ghost: "GHOST.END: verabschiedet sich",
+    universum: "2ME: Innenraum geht in Ruhemodus",
+    echo: "RAW-04: Nachhall sanft",
+    drift: "Drift: 0",
+    loop: "Wurmloch: geschlossen",
+    pack: "KlicK.me: Slots gesichert",
+    iam: "iAM: Sync abgeschlossen",
+    multi: "NC-MULTI: alle Slots gespeichert",
+    status: "System: stabil • freundlich • bereit für später"
+  };
 
-<div class="panel">
-  <div class="title">Echo-Meter</div>
-  <pre id="echoMeter"></pre>
-</div>
-
-<div class="panel">
-  <div class="title">Wurmloch-Trace</div>
-  <pre id="traceOut"></pre>
-</div>
+  ncGoodbyeText.textContent = JSON.stringify(msg, null, 2);
+  ncGoodbye.style.display = "block";
+}
+</script>
