@@ -1,1 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>iAM – KlicK.me Pack Visualizer</title>
+
+  <!-- Kern-Engines -->
+  <script src="nc-core.js"></script>
+  <script src="nc-multi.js"></script>
+
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 16px; }
+    #row { display: flex; gap: 16px; }
+    #left, #right { flex: 1; }
+    textarea { width: 100%; height: 160px; }
+    pre { background:#111; color:#0f0; padding:8px; overflow:auto; }
+    button { margin: 2px 4px; }
+  </style>
+</head>
+<body>
+
+<h1>iAM.html – KlicK.me / NC Multi Visualizer</h1>
+
+<div id="row">
+  <div id="left">
+    <label>Slot:</label>
+    <select id="slotSelect">
+      <option value="slot-01">slot-01</option>
+      <option value="slot-02">slot-02</option>
+      <option value="iki2li-01">iki2li-01</option>
+    </select>
+
+    <br><br>
+
+    <textarea id="textInput" placeholder="Text / halb groß / halb klein"></textarea>
+
+    <br>
+
+    <button onclick="doLoad()">Load</button>
+    <button onclick="doSave()">Save</button>
+    <button onclick="doCalc()">Calc (NC_GHOST_SCAN)</button>
+    <button onclick="doPack()">Pack (KlicK.me)</button>
+    <button onclick="doUnpack()">Unpack (KlicK.me)</button>
+  </div>
+
+  <div id="right">
+    <label>Output (Wahrheitabbildung):</label>
+    <pre id="output"></pre>
+  </div>
+</div>
+
+<script>
+const out = document.getElementById("output");
+const slotSel = document.getElementById("slotSelect");
+const txt = document.getElementById("textInput");
+
+// Kurz-Helper
+function show(obj){
+  out.textContent = typeof obj === "string"
+    ? obj
+    : JSON.stringify(obj, null, 2);
+}
+
+function doLoad(){
+  const id = slotSel.value;
+  const slot = KlicK.loadSlot(id);
+  txt.value = slot.text || "";
+  show(slot);
+}
+
+function doSave(){
+  const id = slotSel.value;
+  KlicK.setText(id, txt.value);
+  KlicK.saveSlot(id);
+  show("Saved: " + id);
+}
+
+function doCalc(){
+  const id = slotSel.value;
+  // Beispielwerte für mass / velocity
+  const slot = KlicK.setCalc(id, 3.0, 1.5);
+  show(slot);
+}
+
+function doPack(){
+  const id = slotSel.value;
+  const packed = KlicK.encode(id);
+  show(packed);
+}
+
+function doUnpack(){
+  const encoded = prompt("Paste KlicK.me pack:");
+  if (!encoded) return;
+  const slot = KlicK.decode(encoded);
+  slotSel.value = slot.slot || slotSel.value;
+  txt.value = slot.text || "";
+  show(slot);
+}
+</script>
+
+</body>
+</html>
 
