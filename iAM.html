@@ -1,51 +1,50 @@
-<!-- ===========================
-     NC ABSCHIEDS-SCREEN
-     =========================== -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>iAM – NC Visualizer</title>
+
+<script src="nc-core.js"></script>
+<script src="nc-multi.js"></script>
 
 <style>
-  #ncGoodbye {
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle at center, #001100, #000000);
-    color: #00ff88;
-    font-family: system-ui, sans-serif;
-    padding: 40px;
-    text-align: center;
-    display: none;
-  }
-  #ncGoodbye h1 {
-    font-size: 32px;
-    margin-bottom: 20px;
-  }
-  #ncGoodbye pre {
-    background: rgba(0,255,120,0.1);
-    padding: 16px;
-    border-radius: 8px;
-    display: inline-block;
-    text-align: left;
+  body { background:#000; color:#0f0; font-family:system-ui; padding:20px; }
+  #out { background:#111; padding:12px; border-radius:8px; }
+  #ghostHUD {
+    position:fixed; right:10px; bottom:10px;
+    background:#0008; padding:8px 12px; border-radius:6px;
+    color:#0f0; font-size:12px;
   }
 </style>
+</head>
 
-<div id="ncGoodbye">
-  <h1>NC Abschieds‑Screen</h1>
-  <pre id="ncGoodbyeText"></pre>
-</div>
+<body>
+
+<h1>iAM – NC Visualizer</h1>
+<pre id="out">NC bereit…</pre>
+
+<div id="ghostHUD">GHOST: online • 2ME: aktiv • Wurmloch: stabil</div>
 
 <script>
-function NC_ABSCHIED(){
-  const msg = {
-    ghost: "GHOST.END: verabschiedet sich",
-    universum: "2ME: Innenraum geht in Ruhemodus",
-    echo: "RAW-04: Nachhall sanft",
-    drift: "Drift: 0",
-    loop: "Wurmloch: geschlossen",
-    pack: "KlicK.me: Slots gesichert",
-    iam: "iAM: Sync abgeschlossen",
-    multi: "NC-MULTI: alle Slots gespeichert",
-    status: "System: stabil • freundlich • bereit für später"
-  };
-
-  ncGoodbyeText.textContent = JSON.stringify(msg, null, 2);
-  ncGoodbye.style.display = "block";
+function show(obj){
+  out.textContent = typeof obj === "string"
+    ? obj
+    : JSON.stringify(obj, null, 2);
 }
+
+function NC_BOOT(){
+  show({
+    ghost:"GHOST.PING: aktiv",
+    state:"2ME Innenraum",
+    echo:"RAW-04 sichtbar",
+    loop:"geschlossen",
+    wurmloch:"IN→OUT→IN",
+    status:"NC bereit"
+  });
+}
+
+window.addEventListener("load", NC_BOOT);
 </script>
+
+</body>
+</html>
