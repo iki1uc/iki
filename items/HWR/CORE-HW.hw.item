@@ -1,1 +1,19 @@
+ITEM: CORE-HW
+TYPE: hardware
+VERSION: raw-1
+
+# PURPOSE
+- base hardware layer for 6me
+- provide raw hardware context
+
+# INPUTS
+?ctx
+
+# OUTPUTS
+!ctx
+
+# RULES
+&raw → ctx
+
+END
 
