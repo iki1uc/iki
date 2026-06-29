@@ -1,1 +1,11 @@
+ITEM: 6ME STATION 02
+TYPE: bench
+VERSION: raw-1
 
+# INPUTS
+?OR9
+
+# OUTPUTS
+!OR9
+
+END
