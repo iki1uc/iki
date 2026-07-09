@@ -1,1 +1,15 @@
+ITEM: 6ME BENCH PLAN
+TYPE: bench
+VERSION: raw-1
 
+# INPUTS
+?NR6
+?MS6
+?TG3
+
+# OUTPUTS
+!OR9
+
+# RULES
+&raw in → raw out
+END
