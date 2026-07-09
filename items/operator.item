@@ -1,0 +1,30 @@
+ITEM: 6ME OPERATOR
+TYPE: operator
+VERSION: raw-1
+
+# PURPOSE
+- define operator mapping
+- raw input → raw output
+
+# OPERATORS
+? = input
+! = output
+& = state
+
+# STATES
+&idle
+&processing
+&error
+
+# FLOW
+? → &processing
+&processing → !output
+&error → !err
+
+# TEST CASES
+?A → !A
+?B → !B
+?0 → !0
+?* → !*
+
+END
