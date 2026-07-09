@@ -1,24 +1,25 @@
-# 6ME — RAW Bench Material
+# iki — RAW Bench Material
 
-6ME ist ein neutraler Bench-Respo.  
-Er enthält Stationen, Items und Operator-Material für einfache RAW-Tests.
+iki ist der neutrale TECH‑Master für Bench‑Material.
+Er enthält Stationen, Items und Operator‑Module für RAW‑Tests,
+ohne Identität, ohne Achsen, ohne POS, ohne Respo.
 
 ## Inhalt
-/items  
-- station-01.bench.item  
-- station-02.bench.item  
-- 6me-bench-plan.item  
-- 6me-operator.item  
+/items
+- station-01.bench.item
+- station-02.bench.item
+- iki-bench-plan.item
+- iki-operator.item
 
 ## Zweck
-6ME dient als Behälter für Bench-Dateien.  
-Keine Logik, keine Engine, keine Interpretation.  
-Nur RAW-Material für Tests und Verhalten.
+iki dient als Behälter für Bench‑Dateien.
+Keine Identität, keine Achsen, keine Interpretation.
+Nur TECH‑Material für Tests, Routing und Verhalten.
 
 ## Nutzung
-Die Dateien können direkt in Bench-Viewer wie DINOly geladen werden.  
-Jede Station arbeitet unabhängig.
+Die Dateien können direkt in Bench‑Viewer wie DINOly geladen werden.
+Jede Station arbeitet unabhängig und ohne Identitäts‑Einfluss.
 
 ## Status
-6ME ist ein reiner Material-Respo.
-
+iki ist ein reiner TECH‑Master.
+Identität liegt extern bei 6e.
