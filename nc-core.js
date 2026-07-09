@@ -12,5 +12,8 @@ function NC_init(){
 }
 
 function NC_status(){
-  return `NC STATUS\nActive: ${NC_STATE.active}\nSlots: ${NC_STATE.slots}\nMaster: ${NC_STATE.master}`;
+  return `NC STATUS
+Active: ${NC_STATE.active}
+Slots: ${NC_STATE.slots}
+Master: ${NC_STATE.master}`;
 }
