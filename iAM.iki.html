@@ -1,1 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>iAM :: iki System-Master</title>
+<style>
+  body { background:#000; color:#0f0; font-family:system-ui; padding:20px; }
+  h1 { color:#0f0; }
+  pre { color:#0f0; }
+</style>
+
+<script>
+// iAM :: iki TECH STATUS
+function iAM_start(){
+  const status = `
+iAM :: iki SYSTEM-MASTER
+
+TECH-MODULE:
+- NC CORE .......... OK
+- NC MULTI ......... OK
+- BENCH ............ OK
+- OPERATOR ......... OK
+- RAW IN/OUT ....... OK
+- LOCH ............. OK
+- HW-FLOW .......... OK
+- HW-MAP ........... OK
+- HW-PULSE ......... OK
+- HWR .............. OK
+
+IDENTITY:
+- keine Identität geladen
+- keine Achsen geladen
+- keine POS geladen
+- keine RESPO geladen
+
+SYSTEM:
+- iki = TECH-MASTER
+- 6e = IDENTITÄT-MODUL (extern)
+`;
+
+  document.getElementById("out").innerText = status;
+}
+
+window.addEventListener("load", iAM_start);
+</script>
+</head>
+
+<body>
+<h1>iAM :: iki System-Master</h1>
+<pre id="out"></pre>
+</body>
+</html>
 
