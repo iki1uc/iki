@@ -24,38 +24,31 @@ Jede Station arbeitet unabhängig und ohne Identitäts‑Einfluss.
 iki ist ein reiner TECH‑Master.
 Identität liegt extern bei 6e.
 
+---
 
+# Referenz – Systemkreis (neutral)
 
-iki → bir → uc → iki1uc
+iki → bir → uc → iki1uc (360°‑Kreis)
 
 SYS / TEM / ID / OP
 
 TΩ / XU / Φ4 / O12
 
-SYS
+SYS  
+TEM  
+ID  
+OP  
 
-TEM
+3hit90  
 
-ID
+TΩ  
+XU  
+Φ4  
+O12  
 
-OP
-
-3hit90
-
-TΩ
-
-XU
-
-Φ4
-
-O12
-
-BRM
-
-TOOLOMAT
-
-TIME
-
-RUN8
+BRM  
+TOOLOMAT  
+TIME  
+RUN8  
 
 iki → bir → uc → iki1uc (360°‑Kreis)
