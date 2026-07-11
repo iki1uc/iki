@@ -1,38 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-<meta charset="utf-8">
-<title>NC Start</title>
+<meta charset="UTF-8">
+<title>iki — RAW Bench Material</title>
+
 <style>
-  body { background:#000; color:#0f0; font-family:system-ui; padding:20px; }
+  body { background:#000; color:#0f0; font-family:monospace; padding:20px; }
+  h1 { color:#6f6; }
+  .block { border:1px solid #0f0; padding:12px; margin-bottom:18px; }
+  .label { color:#0ff; font-weight:bold; }
+  a { color:#6cf; }
 </style>
 
-<script>
-async function UploadCheck(){
-  try {
-    const res = await fetch("iAM.iki.html");
-    return res.status === 200 ? "OK" : "FEHLT";
-  } catch(e){
-    return "FEHLT";
-  }
-}
-
-async function NC_Fallback(){
-  const status = await UploadCheck();
-
-  if(status === "OK"){
-    window.location.href = "iAM.iki.html";
-  } else {
-    window.location.href = "index.6e.html";
-  }
-}
-
-window.addEventListener("load", NC_Fallback);
-</script>
 </head>
-
 <body>
-<h1>NC Start</h1>
-<p>Prüfe iAM.iki.html…</p>
+
+<h1>iki — RAW Bench Material</h1>
+<p>Neutraler TECH‑Master ohne Identität, ohne Achsen, ohne POS, ohne Respo.</p>
+
+<div class="block">
+  <span class="label">RAW Stationen</span><br>
+  <a href="items/station-01.bench.item">station‑01.bench.item</a>
+  <a href="items/station-02.bench.item">station‑02.bench.item</a>
+  <a href="items/iki-bench-plan.item">iki‑bench‑plan.item</a>
+  <a href="items/iki-operator.item">iki‑operator.item</a>
+</div>
+
+<div class="block">
+  <span class="label">RAW Status</span><br>
+  iki = RAW<br>
+  Identität = extern (6e)<br>
+  Achsen = none<br>
+  POS = none<br>
+  Respo = none<br>
+</div>
+
+<hr>
+
+<h2>LAGE — real bildend</h2>
+
+<div class="block">
+  <span class="label">LA(GE(LAGE(HOME/TARGET)+)-)+/-</span><br><br>
+
+  HOME: <span style="color:#6f6;">RAW / iki</span><br>
+  TARGET: <span style="color:#6cf;">bir / uc / iki1uc</span><br><br>
+
+  Operatoren:<br>
+  +  = Aufbau<br>
+  -  = Abbau<br>
+  +/- = neutraler Drift<br><br>
+
+  LAGE ist hier **rein technisch**, ohne Identität.<br>
+  Keine Achsen, keine POS, keine Respo.<br>
+  Nur real‑bildende Parameter für Routing.
+</div>
+
+<hr>
+
+<h2>System‑Referenz (neutral)</h2>
+
+<div class="block">
+  <span class="label">360°‑Kreis</span><br>
+  iki → bir → uc → iki1uc<br>
+</div>
+
+<div class="block">
+  <span class="label">Quadranten</span><br>
+  SYS / TEM / ID / OP
+</div>
+
+<div class="block">
+  <span class="label">Geometrie</span><br>
+  TΩ / XU / Φ4 / O12
+</div>
+
+<div class="block">
+  <span class="label">Module</span><br>
+  3hit90<br>
+  BRM<br>
+  TOOLOMAT<br>
+  TIME<br>
+  RUN8<br>
+</div>
+
+<p style="color:#555;">(Alles neutral, keine Aktivierung.)</p>
+
 </body>
 </html>
