@@ -1,28 +1,41 @@
-export function IKI(x, y){
+// iki.js — ALLXALL CORE
 
-    // Selbstoperator
-    const self = { I: "I", K: "K", I2: "I" };
+import { NC_CORE } from "./nc-core.js";
+import { NC_MULTI } from "./nc-multi.js";
 
-    // / = teilen
-    const div = (x / (y || 1));
+export function IKI_ALLXALL(x, y){
 
-    // * = multiplizieren
-    const mul = div * (self.I.length + self.K.length + self.I2.length);
+    const IKI = { I:"I", K:"K", I2:"I" };
 
-    // - = abziehen
-    const sub = mul - x;
-
-    // + = hinzufügen
-    const add = sub + y;
-
-    // axiomische Rotation
-    const rot = (add % 360);
+    const div = (x / (y || 1));                         // /
+    const mul = div * (IKI.I.length + IKI.K.length + IKI.I2.length); // *
+    const sub = mul - x;                                // -
+    const add = sub + y;                                // +
+    const rot = add % 360;                              // axiomische Rotation
 
     return {
         QI: rot,
         EVO: add,
         RAW: mul,
         TMP: sub,
-        CORE: self
+        CORE: IKI
+    };
+}
+
+export async function IKI_BENCH(){
+    const load = async n => (await fetch(`bench/${n}.bench.item`)).text();
+    return {
+        S1: await load("station-01"),
+        S2: await load("station-02")
+    };
+}
+
+export async function IKI_SYSTEM(x, y){
+    const evo = IKI_ALLXALL(x, y);
+    return {
+        CORE: NC_CORE(evo),
+        MULTI: NC_MULTI(evo),
+        EVO: evo,
+        BENCH: await IKI_BENCH()
     };
 }
