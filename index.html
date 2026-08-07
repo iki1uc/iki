@@ -2,41 +2,118 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>IKI · ALLXALL CORE</title>
+<title>IKI · ALLXALL CORE · TMP⁴ · EVOCHAIN</title>
 
 <style>
 body { background:#000; color:#0f0; font-family:monospace; padding:20px; }
 h1 { color:#6f6; }
+.module {
+    background:#111;
+    padding:20px;
+    margin:25px 0;
+    border-left:4px solid #0f0;
+}
 pre { background:#111; padding:15px; border:1px solid #0f0; }
-button { background:#111; color:#0f0; border:1px solid #0f0; padding:8px 16px; }
+button {
+    background:#111; color:#0f0; border:1px solid #0f0;
+    padding:8px 16px; margin-bottom:20px;
+}
 </style>
 </head>
 
 <body>
 
-<h1>IKI · ALLXALL CORE</h1>
+<h1>IKI · ALLXALL CORE · TMP⁴ · EVOCHAIN</h1>
 
-<button onclick="run()">RUN IKI</button>
+<button onclick="run()">RUN IKI SYSTEM</button>
 
+<div class="module">
+<h2>IKI SYSTEM OUTPUT</h2>
 <pre id="out">Bereit...</pre>
+</div>
+
+<div class="module">
+<h2>Datei‑Status (Auto‑Loader)</h2>
+<pre id="files">Lade Dateien…</pre>
+</div>
 
 <script type="module">
 import { IKI_SYSTEM } from "./iki.js";
 
+// ------------------------------------------------------
+// Datei‑Loader (für alle LAGE‑ und System‑Dateien)
+// ------------------------------------------------------
+async function load(path){
+    try {
+        const r = await fetch(path);
+        return await r.text();
+    } catch {
+        return `FEHLT: ${path}`;
+    }
+}
+
+async function loadFiles(){
+    const data = {
+        "ID.html": await load("ID.html"),
+        "LAGE.TMP": await load("LAGE.TMP"),
+        "LAGE.ort": await load("LAGE.ort"),
+        "LAGE.xALL.js": await load("LAGE.xALL.js"),
+        "system-check.item": await load("system-check.item"),
+        "stufe-bedeutung-5.csv": await load("stufe-bedeutung-5.csv"),
+        "README.md": await load("README.md")
+    };
+
+    document.getElementById("files").textContent =
+        JSON.stringify(data, null, 2);
+}
+
+// ------------------------------------------------------
+// RUN IKI SYSTEM
+// ------------------------------------------------------
 async function run(){
     const sys = await IKI_SYSTEM(12, 7);
 
-    out.textContent = JSON.stringify({
+    const output = {
+        // ALLXALL Operator
         QI: sys.EVO.QI,
         EVO: sys.EVO.EVO,
         RAW: sys.EVO.RAW,
         TMP: sys.EVO.TMP,
         CORE: sys.EVO.CORE,
+
+        // NC‑Module
         NC_CORE: sys.CORE,
         NC_MULTI: sys.MULTI,
-        BENCH: sys.BENCH
-    }, null, 2);
+
+        // Bench‑Stationen
+        BENCH: sys.BENCH,
+
+        // TMP⁴ LAGE
+        TMP4: {
+            lage: sys.EVO.TMP_lage,
+            respo: sys.EVO.TMP_respo,
+            home: sys.EVO.TMP_home,
+            ort: sys.EVO.TMP_ort
+        },
+
+        // EVOCHAIN
+        EVOCHAIN: sys.EVOCHAIN,
+
+        // System‑Meta
+        SYSTEM: "iki1uc",
+        ENGINE: "ULTRA3.0",
+        CONTINIUM: true,
+        UNLINEAR: true
+    };
+
+    document.getElementById("out").textContent =
+        JSON.stringify(output, null, 2);
 }
+
+// ------------------------------------------------------
+// Start
+// ------------------------------------------------------
+loadFiles();
 </script>
 
 </body>
