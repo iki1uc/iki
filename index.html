@@ -21,13 +21,10 @@ button { background:#111; color:#0f0; border:1px solid #0f0; padding:8px 16px; }
 <pre id="out">Bereit...</pre>
 
 <script type="module">
-import { IKI_SYSTEM } from "./IKI.SYSTEM.js";
-import { IKI_BENCH } from "./IKI.SYSTEM.js";
+import { IKI_SYSTEM } from "./iki.js";
 
 async function run(){
-
-    const sys = IKI_SYSTEM(12, 7);
-    const bench = await IKI_BENCH();
+    const sys = await IKI_SYSTEM(12, 7);
 
     out.textContent = JSON.stringify({
         QI: sys.EVO.QI,
@@ -37,7 +34,7 @@ async function run(){
         CORE: sys.EVO.CORE,
         NC_CORE: sys.CORE,
         NC_MULTI: sys.MULTI,
-        BENCH: bench
+        BENCH: sys.BENCH
     }, null, 2);
 }
 </script>
