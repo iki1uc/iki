@@ -2,88 +2,45 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>iki — RAW Bench Material</title>
+<title>IKI · ALLXALL CORE</title>
 
 <style>
-  body { background:#000; color:#0f0; font-family:monospace; padding:20px; }
-  h1 { color:#6f6; }
-  .block { border:1px solid #0f0; padding:12px; margin-bottom:18px; }
-  .label { color:#0ff; font-weight:bold; }
-  a { color:#6cf; }
+body { background:#000; color:#0f0; font-family:monospace; padding:20px; }
+h1 { color:#6f6; }
+pre { background:#111; padding:15px; border:1px solid #0f0; }
+button { background:#111; color:#0f0; border:1px solid #0f0; padding:8px 16px; }
 </style>
-
 </head>
+
 <body>
 
-<h1>iki — RAW Bench Material</h1>
-<p>Neutraler TECH‑Master ohne Identität, ohne Achsen, ohne POS, ohne Respo.</p>
+<h1>IKI · ALLXALL CORE</h1>
 
-<div class="block">
-  <span class="label">RAW Stationen</span><br>
-  <a href="items/station-01.bench.item">station‑01.bench.item</a>
-  <a href="items/station-02.bench.item">station‑02.bench.item</a>
-  <a href="items/iki-bench-plan.item">iki‑bench‑plan.item</a>
-  <a href="items/iki-operator.item">iki‑operator.item</a>
-</div>
+<button onclick="run()">RUN IKI</button>
 
-<div class="block">
-  <span class="label">RAW Status</span><br>
-  iki = RAW<br>
-  Identität = extern (6e)<br>
-  Achsen = none<br>
-  POS = none<br>
-  Respo = none<br>
-</div>
+<pre id="out">Bereit...</pre>
 
-<hr>
+<script type="module">
+import { IKI_SYSTEM } from "./IKI.SYSTEM.js";
+import { IKI_BENCH } from "./IKI.SYSTEM.js";
 
-<h2>LAGE — real bildend</h2>
+async function run(){
 
-<div class="block">
-  <span class="label">LA(GE(LAGE(HOME/TARGET)+)-)+/-</span><br><br>
+    const sys = IKI_SYSTEM(12, 7);
+    const bench = await IKI_BENCH();
 
-  HOME: <span style="color:#6f6;">RAW / iki</span><br>
-  TARGET: <span style="color:#6cf;">bir / uc / iki1uc</span><br><br>
-
-  Operatoren:<br>
-  +  = Aufbau<br>
-  -  = Abbau<br>
-  +/- = neutraler Drift<br><br>
-
-  LAGE ist hier **rein technisch**, ohne Identität.<br>
-  Keine Achsen, keine POS, keine Respo.<br>
-  Nur real‑bildende Parameter für Routing.
-</div>
-
-<hr>
-
-<h2>System‑Referenz (neutral)</h2>
-
-<div class="block">
-  <span class="label">360°‑Kreis</span><br>
-  iki → bir → uc → iki1uc<br>
-</div>
-
-<div class="block">
-  <span class="label">Quadranten</span><br>
-  SYS / TEM / ID / OP
-</div>
-
-<div class="block">
-  <span class="label">Geometrie</span><br>
-  TΩ / XU / Φ4 / O12
-</div>
-
-<div class="block">
-  <span class="label">Module</span><br>
-  3hit90<br>
-  BRM<br>
-  TOOLOMAT<br>
-  TIME<br>
-  RUN8<br>
-</div>
-
-<p style="color:#555;">(Alles neutral, keine Aktivierung.)</p>
+    out.textContent = JSON.stringify({
+        QI: sys.EVO.QI,
+        EVO: sys.EVO.EVO,
+        RAW: sys.EVO.RAW,
+        TMP: sys.EVO.TMP,
+        CORE: sys.EVO.CORE,
+        NC_CORE: sys.CORE,
+        NC_MULTI: sys.MULTI,
+        BENCH: bench
+    }, null, 2);
+}
+</script>
 
 </body>
 </html>
