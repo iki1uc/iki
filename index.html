@@ -2,118 +2,482 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>IKI · ALLXALL CORE · TMP⁴ · EVOCHAIN</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌀 SCHEIBEN · 3×27 · 81 · MEMBRAN · ROLLFLÄCHE</title>
 
 <style>
-body { background:#000; color:#0f0; font-family:monospace; padding:20px; }
-h1 { color:#6f6; }
-.module {
-    background:#111;
-    padding:20px;
-    margin:25px 0;
-    border-left:4px solid #0f0;
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  background: #0a0a0f;
+  color: #c8d0d0;
+  font-family: 'Consolas', 'Courier New', monospace;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background: radial-gradient(ellipse at 50% 50%, #0a0a1a, #000000);
+  transition: background 0.8s ease;
 }
-pre { background:#111; padding:15px; border:1px solid #0f0; }
-button {
-    background:#111; color:#0f0; border:1px solid #0f0;
-    padding:8px 16px; margin-bottom:20px;
+.container {
+  max-width: 1100px;
+  width: 100%;
+  background: rgba(10,10,20,0.3);
+  border: 1px solid rgba(0,204,255,0.03);
+  border-radius: 20px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 100px rgba(0,0,0,0.8);
 }
+.header {
+  text-align: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  margin-bottom: 16px;
+}
+.header h1 {
+  font-size: 24px;
+  background: linear-gradient(90deg, #00ccff, #ff66ff, #ffaa00, #00ff88);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 4px;
+}
+.header .sub {
+  color: #445555;
+  font-size: 11px;
+  letter-spacing: 3px;
+}
+.header .sub .axiom { color: #ff66ff; }
+.header .sub .roll { color: #00ccff; }
+
+.canvas-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  aspect-ratio: 1/1;
+  background: rgba(0,0,0,0.4);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.02);
+  overflow: hidden;
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
+}
+#scheibenCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+@media (max-width:600px){ .info-grid { grid-template-columns:1fr 1fr; } }
+.info-card {
+  background: rgba(10,10,20,0.2);
+  border: 1px solid rgba(255,255,255,0.02);
+  border-radius: 8px;
+  padding: 8px 6px;
+  text-align: center;
+  font-size: 9px;
+}
+.info-card .value {
+  font-size: 20px;
+  font-weight: bold;
+  font-family: monospace;
+}
+.info-card .label {
+  color: #445555;
+  font-size: 7px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.controls {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 12px;
+}
+.controls button {
+  background: rgba(20,35,35,0.2);
+  color: #668888;
+  border: 1px solid rgba(255,255,255,0.02);
+  padding: 5px 16px;
+  border-radius: 18px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 9px;
+  transition: all 0.3s;
+}
+.controls button:hover { background: rgba(40,80,70,0.08); color: #aaeedd; }
+.controls button.active { background: rgba(40,80,70,0.06); color: #00ff88; }
+.controls button.axiom { color: #ff66ff; border-color: rgba(255,102,255,0.05); }
+.controls button.roll { color: #00ccff; border-color: rgba(0,204,255,0.05); }
+
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 12px;
+  margin-top: 10px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+  font-size: 8px;
+  color: #445555;
+  border: 1px solid rgba(255,255,255,0.01);
+}
+.status-bar .axiom { color: #ff66ff; }
+.status-bar .roll { color: #00ccff; }
+
+.footer {
+  text-align: center;
+  margin-top: 8px;
+  color: #222;
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+.footer span { color: #ff66ff; }
 </style>
 </head>
-
 <body>
 
-<h1>IKI · ALLXALL CORE · TMP⁴ · EVOCHAIN</h1>
+<div class="container">
 
-<button onclick="run()">RUN IKI SYSTEM</button>
-
-<div class="module">
-<h2>IKI SYSTEM OUTPUT</h2>
-<pre id="out">Bereit...</pre>
+<div class="header">
+  <h1>🌀 SCHEIBEN · 3×27 · 81</h1>
+  <div class="sub"><span class="axiom">3ER AXIOM</span> · <span class="roll">ROLLFLÄCHE</span> · MEMBRAN</div>
 </div>
 
-<div class="module">
-<h2>Datei‑Status (Auto‑Loader)</h2>
-<pre id="files">Lade Dateien…</pre>
+<div class="canvas-wrap">
+  <canvas id="scheibenCanvas"></canvas>
 </div>
 
-<script type="module">
-import { IKI_SYSTEM } from "./iki.js";
+<div class="info-grid">
+  <div class="info-card">
+    <div class="value" id="zyklusDisplay" style="color:#ff66ff;">0</div>
+    <div class="label">🌀 ZYKLUS</div>
+  </div>
+  <div class="info-card">
+    <div class="value" id="scheibeDisplay" style="color:#00ccff;">0</div>
+    <div class="label">🔄 SCHEIBE</div>
+  </div>
+  <div class="info-card">
+    <div class="value" id="transparenzDisplay" style="color:#ffaa00;">0%</div>
+    <div class="label">🔮 TRANSPARENZ</div>
+  </div>
+  <div class="info-card">
+    <div class="value" id="rollDisplay" style="color:#00ff88;">0°</div>
+    <div class="label">🌀 ROLLWINKEL</div>
+  </div>
+</div>
 
-// ------------------------------------------------------
-// Datei‑Loader (für alle LAGE‑ und System‑Dateien)
-// ------------------------------------------------------
-async function load(path){
-    try {
-        const r = await fetch(path);
-        return await r.text();
-    } catch {
-        return `FEHLT: ${path}`;
+<div class="controls">
+  <button class="active axiom" id="btnStart">▶ START</button>
+  <button class="axiom" id="btnAxiom">🌀 3×27</button>
+  <button class="roll" id="btnRoll">🔄 ROLL</button>
+  <button id="btnProof">🔮 PROOF</button>
+  <button id="btnReset">⟲ RESET</button>
+</div>
+
+<div class="status-bar">
+  <span class="axiom">🌀 AXIOM: <span id="axiomStatus">3×27</span></span>
+  <span class="roll">🔄 ROLL: <span id="rollStatus">0°</span></span>
+  <span>⏱️ <span id="timeStatus">00:00</span></span>
+</div>
+
+<div class="footer">
+  <span>🌀</span> SCHEIBEN · 3×27 · 81 · MEMBRAN · ROLLFLÄCHE · <span>wieimmer4u</span>
+</div>
+
+</div>
+
+<script>
+// ============================================================
+// SCHEIBEN · 3×27 · 81 · MEMBRAN · ROLLFLÄCHE
+// ============================================================
+
+// ===== CANVAS =====
+const canvas = document.getElementById('scheibenCanvas');
+const ctx = canvas.getContext('2d');
+let running = true;
+let time = 0;
+let zyklus = 0;
+let scheibe = 0;
+let transparenz = 70;
+let rollWinkel = 0;
+let rollSpeed = 0.3;
+let axiomStep = 0;
+
+function resizeCanvas() {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const size = Math.min(rect.width, rect.height, 660);
+  canvas.width = size;
+  canvas.height = size;
+}
+window.addEventListener('resize', resizeCanvas);
+
+// ===== SCHEIBEN =====
+// 3 Scheiben × 27 = 81
+// Jede Scheibe hat: Position, Größe, Transparenz, Rollwinkel
+
+const SCHEIBEN = [
+  { x: 0.3, y: 0.4, r: 0.18, farbe: 'rgba(0,204,255,', label: 'A' },
+  { x: 0.5, y: 0.55, r: 0.22, farbe: 'rgba(255,102,255,', label: 'B' },
+  { x: 0.7, y: 0.4, r: 0.18, farbe: 'rgba(255,170,0,', label: 'C' }
+];
+
+// ===== ZEICHNEN =====
+function drawScheiben(time) {
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  // Hintergrund
+  const grad = ctx.createRadialGradient(w/2, h/2, 10, w/2, h/2, w/2);
+  grad.addColorStop(0, '#0a0a1a');
+  grad.addColorStop(0.5, '#050510');
+  grad.addColorStop(1, '#000000');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Stadt-Silhouette (angedeutet)
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = 'rgba(255,255,255,0.01)';
+  for (let i = 0; i < 20; i++) {
+    const x = (i / 20) * w;
+    const height = 20 + Math.sin(i * 0.5 + time / 2000) * 10 + 30;
+    ctx.fillRect(x, h - height, w / 20 + 2, height);
+  }
+
+  // ===== 3 SCHEIBEN =====
+  for (let i = 0; i < SCHEIBEN.length; i++) {
+    const s = SCHEIBEN[i];
+    const cx = s.x * w;
+    const cy = s.y * h;
+    const radius = s.r * Math.min(w, h);
+
+    // Transparenz (70-85%)
+    const alpha = (transparenz / 100) * 0.85 + 0.1;
+    const aktuell = alpha * (0.7 + 0.15 * Math.sin(time / 2000 + i * 2));
+
+    // Roll-Effekt (Scheibe rollt)
+    const rollOffset = Math.sin(rollWinkel + i * 1.2) * radius * 0.08;
+    const rollOffsetY = Math.cos(rollWinkel + i * 1.2) * radius * 0.06;
+
+    // Membran-Effekt (wellige Oberfläche)
+    const membraneX = Math.sin(time / 1500 + i * 1.5) * 6;
+    const membraneY = Math.cos(time / 1800 + i * 1.3) * 6;
+
+    // Scheiben-Glow
+    ctx.shadowColor = s.farbe + (0.2 * aktuell) + ')';
+    ctx.shadowBlur = 40;
+
+    // Scheibe (Membran)
+    const grad2 = ctx.createRadialGradient(
+      cx + rollOffset + membraneX, cy + rollOffsetY + membraneY, 2,
+      cx + rollOffset, cy + rollOffsetY, radius
+    );
+    grad2.addColorStop(0, s.farbe + (0.3 * aktuell) + ')');
+    grad2.addColorStop(0.3, s.farbe + (0.2 * aktuell) + ')');
+    grad2.addColorStop(0.7, s.farbe + (0.1 * aktuell) + ')');
+    grad2.addColorStop(1, s.farbe + (0.05 * aktuell) + ')');
+
+    ctx.fillStyle = grad2;
+    ctx.beginPath();
+    ctx.arc(cx + rollOffset, cy + rollOffsetY, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Membran-Linien (wellig)
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = s.farbe + (0.15 * aktuell) + ')';
+    ctx.lineWidth = 0.5;
+    for (let ring = 0; ring < 5; ring++) {
+      const r = radius * (0.2 + ring * 0.15);
+      const wave = Math.sin(time / 1000 + ring * 0.5 + i) * 4;
+      ctx.beginPath();
+      for (let a = 0; a < Math.PI * 2; a += 0.05) {
+        const rr = r + Math.sin(a * 5 + time / 800 + i * 1.2) * 3 + wave;
+        const x = cx + rollOffset + Math.cos(a) * rr;
+        const y = cy + rollOffsetY + Math.sin(a) * rr * 0.9;
+        if (a === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.stroke();
     }
+
+    // Label
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = s.farbe + (0.8) + ')';
+    ctx.font = `${radius * 0.2}px monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(`${s.label} · ${Math.round(transparenz)}%`, cx + rollOffset, cy + rollOffsetY);
+
+    // Zyklus-Zahl
+    ctx.fillStyle = '#445555';
+    ctx.font = `${radius * 0.12}px monospace`;
+    ctx.fillText(`3×27 = 81`, cx + rollOffset, cy + rollOffsetY + radius * 0.3);
+
+    // Roll-Indikator
+    ctx.fillStyle = '#44555544';
+    ctx.font = '8px monospace';
+    ctx.textBaseline = 'top';
+    ctx.fillText(`⟳ ${Math.round(rollWinkel * 180 / Math.PI)}°`, cx + rollOffset - radius * 0.3, cy + rollOffsetY + radius * 0.5);
+  }
+
+  // ===== AXIOM-ANZEIGE =====
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#ff66ff44';
+  ctx.font = '12px monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(`🌀 3 × 27 = 81 · Zyklus ${zyklus} · Scheibe ${scheibe+1}/3`, w/2, h - 16);
+
+  // Info
+  document.getElementById('zyklusDisplay').textContent = zyklus;
+  document.getElementById('scheibeDisplay').textContent = scheibe + 1;
+  document.getElementById('transparenzDisplay').textContent = `${Math.round(transparenz)}%`;
+  document.getElementById('rollDisplay').textContent = `${Math.round(rollWinkel * 180 / Math.PI)}°`;
+  document.getElementById('rollStatus').textContent = `${Math.round(rollWinkel * 180 / Math.PI)}°`;
 }
 
-async function loadFiles(){
-    const data = {
-        "ID.html": await load("ID.html"),
-        "LAGE.TMP": await load("LAGE.TMP"),
-        "LAGE.ort": await load("LAGE.ort"),
-        "LAGE.xALL.js": await load("LAGE.xALL.js"),
-        "system-check.item": await load("system-check.item"),
-        "stufe-bedeutung-5.csv": await load("stufe-bedeutung-5.csv"),
-        "README.md": await load("README.md")
-    };
+// ===== UPDATE =====
+function update() {
+  if (!running) return;
+  time += 16;
 
-    document.getElementById("files").textContent =
-        JSON.stringify(data, null, 2);
+  // Axiom: 3 × 27 = 81
+  // Zyklus: Scheibe 1 → 27 → Scheibe 2 → 27 → Scheibe 3 → 27 → zurück zu Scheibe 1
+  const stepDuration = 2000; // ms pro Schritt
+  const step = Math.floor(time / stepDuration);
+  const phase = (time % stepDuration) / stepDuration;
+
+  // Scheibe wechseln alle 3 Schritte
+  const scheibeIndex = step % 3;
+  scheibe = scheibeIndex;
+
+  // Transparenz wechselt zwischen 70-85%
+  transparenz = 70 + 15 * (0.5 + 0.5 * Math.sin(time / 3000 + scheibeIndex * 1.5));
+
+  // Rollwinkel
+  rollWinkel += rollSpeed * 0.02;
+
+  // Zyklus alle 3 Scheiben
+  if (step % 3 === 0 && phase < 0.05) {
+    zyklus++;
+  }
+
+  // DOM
+  document.getElementById('axiomStatus').textContent = `3×27 · ${zyklus}`;
+
+  // Zeit
+  const seconds = Math.floor(time / 1000);
+  const minutes = Math.floor(seconds / 60);
+  document.getElementById('timeStatus').textContent =
+    `${String(minutes).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+
+  drawScheiben(time);
+  requestAnimationFrame(update);
 }
 
-// ------------------------------------------------------
-// RUN IKI SYSTEM
-// ------------------------------------------------------
-async function run(){
-    const sys = await IKI_SYSTEM(12, 7);
-
-    const output = {
-        // ALLXALL Operator
-        QI: sys.EVO.QI,
-        EVO: sys.EVO.EVO,
-        RAW: sys.EVO.RAW,
-        TMP: sys.EVO.TMP,
-        CORE: sys.EVO.CORE,
-
-        // NC‑Module
-        NC_CORE: sys.CORE,
-        NC_MULTI: sys.MULTI,
-
-        // Bench‑Stationen
-        BENCH: sys.BENCH,
-
-        // TMP⁴ LAGE
-        TMP4: {
-            lage: sys.EVO.TMP_lage,
-            respo: sys.EVO.TMP_respo,
-            home: sys.EVO.TMP_home,
-            ort: sys.EVO.TMP_ort
-        },
-
-        // EVOCHAIN
-        EVOCHAIN: sys.EVOCHAIN,
-
-        // System‑Meta
-        SYSTEM: "iki1uc",
-        ENGINE: "ULTRA3.0",
-        CONTINIUM: true,
-        UNLINEAR: true
-    };
-
-    document.getElementById("out").textContent =
-        JSON.stringify(output, null, 2);
+// ===== TOGGLES =====
+function toggleAxiom() {
+  document.getElementById('axiomStatus').textContent = '🌀 aktiv';
+  document.getElementById('btnAxiom').classList.toggle('active');
+  console.log('🌀 AXIOM getriggert');
 }
 
-// ------------------------------------------------------
-// Start
-// ------------------------------------------------------
-loadFiles();
+function toggleRoll() {
+  rollSpeed = rollSpeed === 0 ? 0.3 : rollSpeed === 0.3 ? 0.8 : 0;
+  document.getElementById('btnRoll').classList.toggle('active');
+  document.getElementById('btnRoll').textContent = rollSpeed ? `🔄 ROLL ${rollSpeed*100}%` : '🔄 ROLL';
+  console.log(`🔄 ROLL: ${rollSpeed}`);
+}
+
+// ===== PROOF =====
+function showProof() {
+  const proof = document.createElement('div');
+  proof.style.cssText = `
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999; backdrop-filter: blur(20px);
+    font-family: 'Consolas', monospace;
+  `;
+  proof.innerHTML = `
+    <div style="text-align:center; padding:40px; border:1px solid rgba(255,102,255,0.1); border-radius:20px; background:rgba(10,10,20,0.6); max-width:450px;">
+      <div style="font-size:48px; color:#ff66ff;">🌀</div>
+      <div style="color:#ff66ff; font-size:20px; margin:12px 0; letter-spacing:4px;">SCHEIBEN · 3×27 · 81</div>
+      <div style="color:#88ddbb; font-size:13px; line-height:1.8;">
+        🔄 SCHEIBE: ${scheibe+1}/3<br>
+        🌀 ZYKLUS: ${zyklus}<br>
+        🔮 TRANSPARENZ: ${Math.round(transparenz)}%<br>
+        🌀 ROLLWINKEL: ${Math.round(rollWinkel * 180 / Math.PI)}°<br>
+        🌀 AXIOM: 3 × 27 = 81
+      </div>
+      <div style="color:#445555; font-size:10px; margin-top:12px; border-top:1px solid rgba(255,255,255,0.02); padding-top:12px;">
+        MEMBRAN · ROLLFLÄCHE · STADT · SICHT
+      </div>
+      <button onclick="this.parentElement.parentElement.remove()" style="
+        margin-top:14px; background:rgba(20,35,35,0.2); color:#668888;
+        border:1px solid rgba(255,255,255,0.02); padding:6px 20px;
+        border-radius:18px; cursor:pointer; font-family:inherit; font-size:9px;
+      ">⏎ SCHLIESSEN</button>
+    </div>
+  `;
+  document.body.appendChild(proof);
+}
+
+// ===== RESET =====
+function resetAll() {
+  zyklus = 0;
+  scheibe = 0;
+  transparenz = 70;
+  rollWinkel = 0;
+  rollSpeed = 0.3;
+  time = 0;
+  document.getElementById('btnStart').classList.remove('active');
+  document.getElementById('btnRoll').textContent = '🔄 ROLL';
+  document.getElementById('btnRoll').classList.remove('active');
+  document.getElementById('axiomStatus').textContent = '3×27';
+  document.getElementById('rollStatus').textContent = '0°';
+  document.getElementById('statusText').textContent = 'reset';
+}
+
+// ===== CONTROLS =====
+document.getElementById('btnStart').addEventListener('click', () => {
+  running = !running;
+  document.getElementById('btnStart').classList.toggle('active');
+  document.getElementById('btnStart').textContent = running ? '▶ START' : '⏸ PAUSE';
+  document.getElementById('statusText').textContent = running ? 'rollt' : 'pausiert';
+  if (running) update();
+});
+
+document.getElementById('btnAxiom').addEventListener('click', toggleAxiom);
+document.getElementById('btnRoll').addEventListener('click', toggleRoll);
+document.getElementById('btnProof').addEventListener('click', showProof);
+document.getElementById('btnReset').addEventListener('click', resetAll);
+
+// ===== TASTATUR =====
+document.addEventListener('keydown', (e) => {
+  if (e.key === ' ') { e.preventDefault(); document.getElementById('btnStart').click(); }
+  if (e.key === 'a' || e.key === 'A') document.getElementById('btnAxiom').click();
+  if (e.key === 'r' || e.key === 'R') document.getElementById('btnRoll').click();
+  if (e.key === 'p' || e.key === 'P') document.getElementById('btnProof').click();
+  if (e.key === 'x' || e.key === 'X') document.getElementById('btnReset').click();
+});
+
+// ===== INIT =====
+resizeCanvas();
+setTimeout(resizeCanvas, 200);
+update();
+
+console.log('🌀 SCHEIBEN · 3×27 · 81 · MEMBRAN · ROLLFLÄCHE');
+console.log('🔮 3 Scheiben · 70-85% Transparenz · rollend');
+console.log('⌨️  Leertaste=Start  a=AXIOM  r=ROLL  p=PROOF  x=Reset');
 </script>
 
 </body>
