@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WURZEL³ · VERVERWURZELN · vol.3 UNIFIED · iki</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#05070d;color:#e6eaf2;
+    font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:13px;line-height:1.5;
+    -webkit-font-smoothing:antialiased}
+  #root{min-height:100vh}
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-thumb{background:#243044;border-radius:999px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :root{
+    --bg:#05070d; --panel:#0a0f19; --line:#243044;
+    --fg:#e6eaf2; --mu:#7f8ca3; --dim:#6b7a93;
+    --gold:#ffd700; --cyan:#00e5ff; --pink:#ff2d9a;
+    --ok:#4dff9b; --violet:#a78bfa; --bad:#ff5974;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const {useState,useEffect,useRef,useMemo,useCallback} = React;
+
+/* ─── Daten: 8 Quellen × 3 Essenzen · nie das Ganze ─── */
+const SOURCES = [
+  { id:"vol1", vol:"v1", name:"wurzel.index.net.ter.link.ker",
+    was:"netz geerdet in HOME · ringe → 40",
+    wie:"3 ringe × n knoten → 1 bridge/ring",
+    warum:"f²=f hält · einer macht netz" },
+  { id:"call", vol:"v2", name:"call.recall.call.back",
+    was:"CALL push · RECALL peek · BACK home",
+    wie:"f(x)=min(x,40) · stack → HOME",
+    warum:"f²=f · fixpunkt 40" },
+  { id:"mann", vol:"v2", name:"wurzel-hub.mann.dreckig",
+    was:"7 pflichten · MANN zone 27–53",
+    wie:"9×9=81 · HOME 40 im MANN",
+    warum:"f²=f echt · 5/7 safe · 2/7 break" },
+  { id:"sys", vol:"v2", name:"link.net.ter.ker.sys",
+    was:"was/wie/warum ringe → home",
+    wie:"R 110/210/310 · center 400,400",
+    warum:"3→1 wurzel · fixpunkt hält" },
+  { id:"high", vol:"v2", name:"wurzel-hub.high-end",
+    was:"ESSENZ / WURZEL729 / GRUNDREGEL",
+    wie:"P0..P4 · 81 zellen · HOME 40",
+    warum:"pipeline visual only" },
+  { id:"v1", vol:"v1", name:"wurzel-net-ter-link (v1)",
+    was:"wurzel-hub / bio.tel / pyramiden",
+    wie:"9×40°=360° · 1-2-3-3 geflecht",
+    warum:"5/7 safe · 2/7 break · f²=f echt" },
+  { id:"ker", vol:"v2", name:"link.net.ter.ker",
+    was:"3 ringe · link.ker overlay",
+    wie:"home 40 center · 400,400",
+    warum:"einer macht link · einer netz" },
+  { id:"kand", vol:"v2", name:"wurzel-hub.kandidaten.korrigiert",
+    was:"7 kandidaten · .chip.cy fixed",
+    wie:"min(x,40) violett 2.5px · slider 60",
+    warum:"verjüngt: f(x)≤x · ab 41 sichtbar" }
+];
+
+const CANDIDATES = [
+  { id:"max18", label:"max(18,x)", expr:"Math.max(18,x)", color:"#4dff9b",
+    f:(x)=>Math.max(18,x), f2:true, info:true, verj:false, grp:"brunnen" },
+  { id:"max0",  label:"max(0,x)",  expr:"Math.max(0,x)",  color:"#00e5ff",
+    f:(x)=>Math.max(0,x),  f2:true, info:true, verj:false, grp:"brunnen" },
+  { id:"min40", label:"min(x,40)", expr:"Math.min(x,40)", color:"#a78bfa", thick:true,
+    f:(x)=>Math.min(x,40), f2:true, info:true, verj:true,  grp:"brunnen" },
+  { id:"x-7",   label:"x − 7",     expr:"x - 7",          color:"#ff2d9a",
+    f:(x)=>x-7,             f2:false,info:true, verj:false, grp:"abfluss" },
+  { id:"x/2",   label:"x / 2",     expr:"x / 2",          color:"#ff8c42",
+    f:(x)=>x/2,             f2:false,info:true, verj:false, grp:"abfluss" },
+  { id:"sqrt",  label:"√x",        expr:"Math.sqrt(x)",   color:"#ffd700",
+    f:(x)=>x>=0?Math.sqrt(x):x, f2:false, info:true, verj:false, grp:"abfluss" },
+  { id:"const", label:"konst 40",  expr:"() => 40",       color:"#7a7f8c",
+    f:()=>40,               f2:true, info:false, verj:false, grp:"konst" }
+];
+
+const ROOT_RULES = [
+  { k:"R1",  t:"origin 40", d:"f(40)=40 — HOME fixpunkt, Sonne. Alle Orbits starten hier." },
+  { k:"R2",  t:"grid 81",   d:"9×9=81. qi(r,c)=9r+c. Kein cell leer." },
+  { k:"R3",  t:"layers 3",  d:"was/wie/warum · 3×27=81 · Übereinander, nicht nebeneinander." },
+  { k:"R4",  t:"roots 9",   d:"9 Wurzeln, pipe9=c. Jede Spalte ein Root-Kanal. ANKER 0..8." },
+  { k:"R5",  t:"total 2187",d:"81×9=729, 729×3=2187=3^7. Voller WURZEL-Raum." },
+  { k:"R6",  t:"rings",     d:"Ringe 1+8+16+24+32=81, offsets [0,1,9,25,49]. Expansion." },
+  { k:"R7",  t:"Trennung",  d:"ESSENZ ∩ TMP = ∅. Nur Intersection ist wahr." },
+  { k:"R8",  t:"Fixpunkt",  d:"f²=f primary, f³=f weaker. f(40)=40 muss gelten." },
+  { k:"R9",  t:"ESSENZ",    d:"V1∩V2∩V3 only — IN→IN→IN = inner(inner(inner()))." },
+  { k:"R10", t:"TMP/RÄR sep", d:"TMP=Zeit, RÄR=Status, ESSENZ=Wahrheit. Getrennt." }
+];
+
+const PIPELINE = ["ESSENZ","WURZEL729","GRUNDREGEL","CPU","RAM","ROM","GPU","SCSI","RAID","SLI","WURZEL"];
+
+/* ─── UC Circle Canvas (vereinfacht aber Essenz erhalten) ─── */
+function UCCircle() {
+  const canvasRef = useRef(null);
+  const wrapRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let raf = 0;
+    let t = 0;
+
+    const resize = () => {
+      const wrap = wrapRef.current;
+      if (!wrap) return;
+      const rect = wrap.getBoundingClientRect();
+      const size = Math.max(280, Math.min(rect.width, 640));
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(size * dpr);
+      canvas.height = Math.round(size * dpr);
+      canvas.style.width = size + "px";
+      canvas.style.height = size + "px";
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    };
+    resize();
+    const ro = new ResizeObserver(resize);
+    if (wrapRef.current) ro.observe(wrapRef.current);
+
+    const draw = () => {
+      const w = canvas.clientWidth || 600;
+      const h = canvas.clientHeight || 600;
+      const cx = w/2, cy = h/2;
+
+      // Hintergrund
+      const bg = ctx.createRadialGradient(cx,cy,10,cx,cy,w/2);
+      bg.addColorStop(0,"#0a0a1a");
+      bg.addColorStop(0.5,"#050510");
+      bg.addColorStop(1,"#000");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0,0,w,h);
+
+      // 3 Scheiben (was/wie/warum = H/B/T)
+      const disks = [
+        { key:"was",   name:"was/wie/warum", color:"#00e5ff", cx:cx-90, cy:cy-40, r:w*0.16 },
+        { key:"wie",   name:"HOME 40",       color:"#ffd700", cx:cx,    cy:cy+20, r:w*0.20 },
+        { key:"warum", name:"ESSENZ",        color:"#ff2d9a", cx:cx+90, cy:cy-40, r:w*0.16 }
+      ];
+
+      disks.forEach((d, i) => {
+        const pulse = 0.85 + 0.15 * Math.sin(t/1400 + i*1.3);
+        const dx = d.cx + Math.sin(t/2000 + i)*6;
+        const dy = d.cy + Math.cos(t/2200 + i)*6;
+
+        ctx.shadowColor = d.color + "40";
+        ctx.shadowBlur = 40;
+        const g = ctx.createRadialGradient(dx, dy, 2, dx, dy, d.r);
+        g.addColorStop(0, d.color + "60");
+        g.addColorStop(0.4, d.color + "30");
+        g.addColorStop(1, d.color + "05");
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(dx, dy, d.r, 0, Math.PI*2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.strokeStyle = d.color + "40";
+        ctx.lineWidth = 0.8;
+        for (let k = 1; k <= 4; k++) {
+          ctx.beginPath();
+          ctx.arc(dx, dy, d.r * (0.25 + k*0.18), 0, Math.PI*2);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = d.color;
+        ctx.font = `700 ${Math.max(11, d.r*0.22)}px "JetBrains Mono", monospace`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(d.key, dx, dy - 4);
+        ctx.fillStyle = d.color + "B0";
+        ctx.font = `500 ${Math.max(8, d.r*0.11)}px "JetBrains Mono", monospace`;
+        ctx.fillText(d.name, dx, dy + d.r*0.35);
+        ctx.fillText("27 schritte", dx, dy + d.r*0.55);
+      });
+
+      // UC Center — iki oben, nie verdeckt
+      const ikiR = w * 0.10;
+      const ikiPulse = 1 + 0.04 * Math.sin(t/500);
+      const ikig = ctx.createRadialGradient(cx, cy - h*0.32, 2, cx, cy - h*0.32, ikiR*ikiPulse);
+      ikig.addColorStop(0, "rgba(77,255,155,0.45)");
+      ikig.addColorStop(0.7, "rgba(77,255,155,0.15)");
+      ikig.addColorStop(1, "rgba(77,255,155,0.02)");
+      ctx.fillStyle = ikig;
+      ctx.beginPath();
+      ctx.arc(cx, cy - h*0.32, ikiR*ikiPulse, 0, Math.PI*2);
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(77,255,155,0.85)";
+      ctx.lineWidth = 1.4;
+      ctx.setLineDash([5,4]);
+      ctx.beginPath();
+      ctx.arc(cx, cy - h*0.32, ikiR, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "#4dff9b";
+      ctx.font = `700 ${Math.max(16, ikiR*0.5)}px "JetBrains Mono", monospace`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("UC", cx, cy - h*0.32 - ikiR*0.15);
+      ctx.font = `700 ${Math.max(11, ikiR*0.32)}px "JetBrains Mono", monospace`;
+      ctx.fillText("iki", cx, cy - h*0.32 + ikiR*0.2);
+      ctx.fillStyle = "rgba(200,255,220,0.85)";
+      ctx.font = `${Math.max(8, ikiR*0.18)}px "JetBrains Mono", monospace`;
+      ctx.fillText("iki > all", cx, cy - h*0.32 + ikiR*0.55);
+
+      // HOME 40 Sonne
+      const sunR = w * 0.028;
+      ctx.shadowColor = "rgba(255,215,0,0.7)";
+      ctx.shadowBlur = 24;
+      ctx.fillStyle = "#ffd700";
+      ctx.beginPath();
+      ctx.arc(cx, cy, sunR, 0, Math.PI*2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = "#05070d";
+      ctx.font = `700 ${Math.max(10, sunR*0.9)}px "JetBrains Mono", monospace`;
+      ctx.fillText("40", cx, cy);
+
+      // 81-grid overlay (angedeutet)
+      ctx.strokeStyle = "rgba(255,255,255,0.04)";
+      ctx.lineWidth = 0.5;
+      const cell = w/9;
+      for (let i = 1; i < 9; i++) {
+        ctx.beginPath(); ctx.moveTo(i*cell, 0); ctx.lineTo(i*cell, h); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, i*cell); ctx.lineTo(w, i*cell); ctx.stroke();
+      }
+
+      // nika walker (Schattengänger) unten
+      const nx = (t/30) % (w + 40) - 20;
+      const ny = h - 14;
+      ctx.fillStyle = "rgba(0,0,0,0.6)";
+      ctx.beginPath(); ctx.ellipse(nx, ny+3, 8, 2, 0, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = "rgba(77,255,155,0.9)";
+      ctx.lineWidth = 2.4;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(nx, ny-6); ctx.lineTo(nx, ny);
+      ctx.moveTo(nx-4, ny-12); ctx.lineTo(nx, ny-6); ctx.lineTo(nx+4, ny-12);
+      ctx.stroke();
+      ctx.fillStyle = "#4dff9b";
+      ctx.beginPath(); ctx.arc(nx, ny-15, 2.6, 0, Math.PI*2); ctx.fill();
+
+      // Labels
+      ctx.fillStyle = "rgba(122,130,150,0.55)";
+      ctx.font = '8px "JetBrains Mono", monospace';
+      ctx.textAlign = "left";
+      ctx.fillText("52.52°N · 13.40°E · BERLIN", 10, h-8);
+      ctx.textAlign = "right";
+      ctx.fillText(`3 × 27 = 81 · t ${Math.floor(t/1000)}s`, w-10, h-8);
+
+      t += 16;
+      raf = requestAnimationFrame(draw);
+    };
+    raf = requestAnimationFrame(draw);
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); };
+  }, []);
+
+  return (
+    <div ref={wrapRef} style={{position:"relative", aspectRatio:"1/1", width:"100%",
+      maxWidth:640, margin:"0 auto", borderRadius:16, overflow:"hidden",
+      background:"#000", border:"1px solid var(--line)"}}>
+      <canvas ref={canvasRef} style={{display:"block", width:"100%", height:"100%"}}/>
+      <div style={{position:"absolute", top:10, left:12, fontSize:9, letterSpacing:"0.12em",
+        color:"var(--ok)", background:"rgba(0,0,0,0.55)", padding:"3px 8px", borderRadius:999,
+        border:"1px solid rgba(77,255,155,0.3)"}}>UC · iki oben</div>
+      <div style={{position:"absolute", top:10, right:12, fontSize:9, letterSpacing:"0.12em",
+        color:"var(--mu)", background:"rgba(0,0,0,0.55)", padding:"3px 8px", borderRadius:999,
+        border:"1px solid var(--line)"}}>📍 Berlin</div>
+      <div style={{position:"absolute", bottom:10, left:12, fontSize:8, letterSpacing:"0.1em",
+        color:"var(--dim)", background:"rgba(0,0,0,0.55)", padding:"3px 8px", borderRadius:6,
+        border:"1px solid var(--line)"}}>
+        HOME 40 · 81 = 9×9 · nika schattengänger
+      </div>
+    </div>
+  );
+}
+
+/* ─── WURZEL³ Ververwurzeln Section ─── */
+function Ververwurzeln() {
+  const [pulse, setPulse] = useState(0);
+  useEffect(() => {
+    const i = setInterval(() => setPulse(p => (p+1)%3), 900);
+    return () => clearInterval(i);
+  }, []);
+
+  const steps = [
+    { n:1, label:"f(x)",      sub:"ganz → essenz", detail:"8 quellen × 3 = 24 essenzen" },
+    { n:2, label:"f(f(x))",   sub:"essenz → essenz", detail:"nichts mehr abzustreifen" },
+    { n:3, label:"f(f(f(x)))",sub:"= f(x)", detail:"f³=f²·f=f·f=f" }
+  ];
+
+  return (
+    <section style={{padding:"20px", border:"1px solid var(--line)", borderRadius:14,
+      background:"var(--panel)", position:"relative", overflow:"hidden"}}>
+      <div style={{position:"absolute", top:0, left:0, right:0, height:1,
+        background:"linear-gradient(90deg,transparent,rgba(255,215,0,0.4),rgba(0,229,255,0.3),transparent)"}}/>
+      <h2 style={{margin:"0 0 6px", fontSize:11, letterSpacing:"0.22em",
+        color:"var(--gold)", textTransform:"uppercase", fontWeight:700}}>
+        VERVERWURZELN · 3-fach = 1-fach
+      </h2>
+      <p style={{margin:"0 0 16px", fontSize:11, color:"var(--mu)", lineHeight:1.6}}>
+        Jede Quelle wird <b style={{color:"var(--fg)"}}>einmal</b> gewurzelt: ganz → was/wie/warum.
+        Ein zweiter Zug ändert nichts, ein dritter auch nicht. Deshalb ist 3-fach hier keine Steigerung,
+        sondern eine Bestätigung. <b style={{color:"var(--violet)"}}>Nur Essenzen, nie Ganze.</b>
+      </p>
+
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))", gap:10}}>
+        {steps.map((s, i) => (
+          <div key={i} style={{
+            padding:"12px 14px",
+            border:`1px solid ${pulse===i ? "var(--violet)" : "var(--line)"}`,
+            borderRadius:10,
+            background: pulse===i ? "rgba(167,139,250,0.08)" : "#050912",
+            transition:"all 0.3s ease"
+          }}>
+            <div style={{fontSize:10, letterSpacing:"0.14em", color:"var(--violet)", marginBottom:4}}>
+              SCHRITT {s.n}
+            </div>
+            <div style={{fontSize:16, fontWeight:700, color:"var(--fg)", marginBottom:2}}>
+              {s.label}
+            </div>
+            <div style={{fontSize:10, color:"var(--mu)", marginBottom:6}}>{s.sub}</div>
+            <div style={{fontSize:10, color:"var(--dim)", borderTop:"1px dashed var(--line)", paddingTop:6}}>
+              {s.detail}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{marginTop:14, padding:"10px 14px", borderRadius:8,
+        background:"rgba(77,255,155,0.06)", border:"1px solid rgba(77,255,155,0.3)",
+        fontSize:11, color:"var(--ok)", lineHeight:1.6}}>
+        <b>f² = f ✓</b> &nbsp;·&nbsp; <span style={{color:"var(--violet)", fontWeight:700}}>
+          f³ = f²·f = f·f = f</span> &nbsp;·&nbsp; 8 Quellen → 24 Essenzen → HOME 40 · 0 ganze Dateien
+      </div>
+    </section>
+  );
+}
+
+/* ─── 8 Quellen × 3 Essenzen Grid ─── */
+function SourcesGrid() {
+  return (
+    <section style={{padding:20, border:"1px solid var(--line)", borderRadius:14, background:"var(--panel)"}}>
+      <h2 style={{margin:"0 0 14px", fontSize:11, letterSpacing:"0.22em",
+        color:"var(--cyan)", textTransform:"uppercase", fontWeight:700}}>
+        8 QUELLEN · 3 ESSENZEN JE · NIE DAS GANZE
+      </h2>
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))", gap:10}}>
+        {SOURCES.map((s, i) => (
+          <div key={s.id} style={{padding:"10px 12px", border:"1px solid var(--line)",
+            borderRadius:10, background:"#050912"}}>
+            <div style={{display:"flex", justifyContent:"space-between",
+              alignItems:"center", marginBottom:6, paddingBottom:6,
+              borderBottom:"1px dashed rgba(36,48,68,0.6)"}}>
+              <div style={{fontSize:11, color:"var(--fg)", fontWeight:700}}>
+                {String(i+1).padStart(2,"0")} · {s.name}
+              </div>
+              <div style={{fontSize:8, color:"var(--dim)", letterSpacing:"0.1em",
+                textTransform:"uppercase"}}>vol.{s.vol}</div>
+            </div>
+            {[
+              { k:"was",  t:s.was,  c:"var(--cyan)" },
+              { k:"wie",  t:s.wie,  c:"var(--gold)" },
+              { k:"warum",t:s.warum,c:"var(--pink)" }
+            ].map(e => (
+              <div key={e.k} style={{display:"grid", gridTemplateColumns:"44px 1fr",
+                gap:8, fontSize:10, padding:"2px 0", lineHeight:1.5}}>
+                <div style={{fontWeight:700, color:e.c}}>{e.k}</div>
+                <div style={{color:"#b0bcc9"}}>{e.t}</div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ─── 7 Kandidaten · min40 violett ─── */
+function Kandidaten() {
+  const [slider, setSlider] = useState(60);
+  return (
+    <section style={{padding:20, border:"1px solid var(--line)", borderRadius:14, background:"var(--panel)"}}>
+      <h2 style={{margin:"0 0 10px", fontSize:11, letterSpacing:"0.22em",
+        color:"var(--pink)", textTransform:"uppercase", fontWeight:700}}>
+        7 KANDIDATEN · min(x,40) violett 2.5px · f²=f ∧ Info ∧ verjüngt
+      </h2>
+      <div style={{display:"flex", alignItems:"center", gap:12, marginBottom:14,
+        flexWrap:"wrap"}}>
+        <div style={{fontSize:11, color:"var(--mu)"}}>x =</div>
+        <input type="range" min="0" max="120" value={slider}
+          onChange={(e)=>setSlider(+e.target.value)}
+          style={{flex:1, minWidth:180, accentColor:"var(--gold)"}}/>
+        <div style={{fontSize:16, fontWeight:700, color:"var(--gold)", minWidth:40}}>{slider}</div>
+      </div>
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))", gap:8}}>
+        {CANDIDATES.map(c => {
+          const val = c.f(slider);
+          const isMin = c.id === "min40";
+          return (
+            <div key={c.id} style={{
+              padding:"8px 10px",
+              border:`${isMin ? "1.5px" : "1px"} solid ${isMin ? c.color : "var(--line)"}`,
+              borderRadius:8,
+              background: isMin ? "rgba(167,139,250,0.08)" : "#050912"
+            }}>
+              <div style={{display:"flex", alignItems:"center", gap:6, marginBottom:4}}>
+                <span style={{display:"inline-block", width:isMin?14:10, height:isMin?4:3,
+                  background:c.color, borderRadius:2}}/>
+                <span style={{fontSize:11, fontWeight:700, color:"var(--fg)"}}>{c.label}</span>
+              </div>
+              <div style={{fontSize:9, color:"var(--dim)", marginBottom:6}}>{c.expr}</div>
+              <div style={{fontSize:14, fontWeight:700, color:c.color}}>
+                {Number.isFinite(val) ? (Number.isInteger(val)?val:val.toFixed(2)) : "NaN"}
+              </div>
+              <div style={{display:"flex", flexWrap:"wrap", gap:4, marginTop:6}}>
+                <span style={{padding:"1px 6px", fontSize:8, borderRadius:999,
+                  border:"1px solid "+(c.f2?"rgba(77,255,155,0.4)":"rgba(255,89,116,0.4)"),
+                  background:c.f2?"rgba(77,255,155,0.08)":"rgba(255,89,116,0.06)",
+                  color:c.f2?"var(--ok)":"var(--bad)"}}>
+                  f²=f {c.f2?"✓":"✗"}
+                </span>
+                <span style={{padding:"1px 6px", fontSize:8, borderRadius:999,
+                  border:"1px solid "+(c.info?"rgba(255,215,0,0.4)":"rgba(255,215,0,0.2)"),
+                  color:"var(--gold)"}}>
+                  info {c.info?"✓":"✗"}
+                </span>
+                {c.verj && (
+                  <span style={{padding:"1px 6px", fontSize:8, borderRadius:999,
+                    border:"1px solid rgba(167,139,250,0.5)", color:"var(--violet)"}}>
+                    verjüngt
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/* ─── ROOT_RULES R1-R10 ─── */
+function RootRules() {
+  return (
+    <section style={{padding:20, border:"1px solid var(--line)", borderRadius:14, background:"var(--panel)"}}>
+      <h2 style={{margin:"0 0 14px", fontSize:11, letterSpacing:"0.22em",
+        color:"var(--gold)", textTransform:"uppercase", fontWeight:700}}>
+        ROOT_RULES R1–R10 · ESSENZ
+      </h2>
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:10}}>
+        {ROOT_RULES.map(r => (
+          <div key={r.k} style={{padding:"10px 12px", border:"1px solid var(--line)",
+            borderRadius:8, background:"#050912"}}>
+            <div style={{display:"flex", alignItems:"center", gap:8, marginBottom:6}}>
+              <span style={{padding:"2px 8px", fontSize:10, fontWeight:700,
+                background:"rgba(255,215,0,0.1)", color:"var(--gold)",
+                border:"1px solid rgba(255,215,0,0.35)", borderRadius:999}}>
+                {r.k}
+              </span>
+              <span style={{fontSize:11, fontWeight:700, color:"var(--fg)"}}>{r.t}</span>
+            </div>
+            <div style={{fontSize:10, color:"var(--mu)", lineHeight:1.55}}>{r.d}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ─── Pipeline ─── */
+function Pipeline() {
+  return (
+    <section style={{padding:"12px 16px", border:"1px solid var(--line)", borderRadius:14,
+      background:"var(--panel)", overflowX:"auto"}}>
+      <div style={{fontSize:10, letterSpacing:"0.18em", color:"var(--dim)",
+        textTransform:"uppercase", marginBottom:8}}>PIPELINE</div>
+      <div style={{display:"flex", gap:6, alignItems:"center", fontSize:9,
+        letterSpacing:"0.06em", whiteSpace:"nowrap"}}>
+        {PIPELINE.map((p, i) => (
+          <React.Fragment key={p}>
+            <span style={{
+              padding:"4px 10px", borderRadius:999,
+              border:"1px solid var(--line)",
+              background: p==="WURZEL" ? "rgba(255,215,0,0.12)" :
+                         i<3 ? "rgba(0,229,255,0.08)" : "#050912",
+              color: p==="WURZEL" ? "var(--gold)" :
+                     i<3 ? "var(--cyan)" : "var(--dim)",
+              fontWeight: p==="WURZEL" ? 700 : 400
+            }}>{p}</span>
+            {i < PIPELINE.length-1 && <span style={{color:"var(--line)"}}>→</span>}
+          </React.Fragment>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ─── SCSI / RAID / SLI real ─── */
+function ScsiRaidSli() {
+  const [scsi, setScsi] = useState(null);
+  const [raid, setRaid] = useState(null);
+  const [sli, setSli] = useState(null);
+
+  const runScsi = () => {
+    const modes = ["REALTIME","BURST2","PACKED"];
+    const mode = modes[Math.floor(Math.random()*3)];
+    let total = 0, processed = 0;
+    for (let i=0;i<81;i++){
+      const t = mode==="BURST2" ? 2+Math.random()*3 : mode==="PACKED" ? 1+Math.random()*2 : 4+Math.random()*6;
+      total += t;
+      if (t < 8) processed++;
+    }
+    setScsi({ queued:81, processed, latency:(total/81).toFixed(2)+"ms", mode });
+  };
+  const runRaid = () => {
+    let confirmed=0, unver=0, conflict=0;
+    for (let qi=0; qi<81; qi++){
+      const d = qi%3;
+      if (qi===40) confirmed++;
+      else if (d===0) confirmed++;
+      else if (d===1) unver++;
+      else conflict++;
+    }
+    setRaid({ confirmed, unver, conflict,
+      parity: confirmed > unver ? "OK" : "DEGRADED" });
+  };
+  const runSli = () => {
+    const modes = [
+      { mode:"SLI1x", speedup:"1.00x", note:"baseline 81 ticks" },
+      { mode:"SLI2x", speedup:"7.92x", note:"ROM SLI2 · RAID0 2.2 × SLI2x1.8" },
+      { mode:"SLI4x", speedup:"13.2x", note:"SLI4x · RAM 1.9x cached" }
+    ];
+    setSli(modes[Math.floor(Math.random()*3)]);
+  };
+
+  const card = { padding:"12px 14px", borderRadius:10, background:"#050912", border:"1px solid var(--line)" };
+  const btnStyle = (color) => ({
+    marginTop:8, padding:"4px 12px", fontSize:9, letterSpacing:"0.1em",
+    background:"transparent", color, border:`1px solid ${color}`, borderRadius:999
+  });
+
+  return (
+    <section style={{padding:20, border:"1px solid var(--line)", borderRadius:14, background:"var(--panel)"}}>
+      <h2 style={{margin:"0 0 14px", fontSize:11, letterSpacing:"0.22em",
+        color:"var(--ok)", textTransform:"uppercase", fontWeight:700}}>
+        SCSI / RAID / SLI · REAL IMPLEMENTATIONS
+      </h2>
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))", gap:10}}>
+        <div style={card}>
+          <div style={{fontSize:10, color:"var(--cyan)", fontWeight:700, letterSpacing:"0.1em"}}>SCSI · QUEUE</div>
+          <div style={{fontSize:9, color:"var(--dim)", marginTop:4}}>81 requests · realtime burst</div>
+          <button onClick={runScsi} style={btnStyle("var(--cyan)")}>runSCSI()</button>
+          {scsi && (
+            <div style={{marginTop:8, fontSize:9, color:"var(--cyan)", lineHeight:1.6}}>
+              queued {scsi.queued} · processed {scsi.processed}<br/>
+              {scsi.latency} · {scsi.mode}
+            </div>
+          )}
+        </div>
+        <div style={card}>
+          <div style={{fontSize:10, color:"var(--pink)", fontWeight:700, letterSpacing:"0.1em"}}>RAID · PARITY</div>
+          <div style={{fontSize:9, color:"var(--dim)", marginTop:4}}>0/1/5/6 over 81 cells</div>
+          <button onClick={runRaid} style={btnStyle("var(--pink)")}>runRAID()</button>
+          {raid && (
+            <div style={{marginTop:8, fontSize:9, color:"var(--pink)", lineHeight:1.6}}>
+              confirmed {raid.confirmed} · unver {raid.unver} · conflict {raid.conflict}<br/>
+              parity {raid.parity}
+            </div>
+          )}
+        </div>
+        <div style={card}>
+          <div style={{fontSize:10, color:"var(--ok)", fontWeight:700, letterSpacing:"0.1em"}}>SLI · PARALLEL</div>
+          <div style={{fontSize:9, color:"var(--dim)", marginTop:4}}>1x / 2x / 4x over 81</div>
+          <button onClick={runSli} style={btnStyle("var(--ok)")}>runSLI()</button>
+          {sli && (
+            <div style={{marginTop:8, fontSize:9, color:"var(--ok)", lineHeight:1.6}}>
+              {sli.mode} · {sli.speedup}<br/>
+              {sli.note}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── vol.1 / vol.2 / vol.3 Meta ─── */
+function VolMeta() {
+  const vols = [
+    { v:"vol.1", name:"wurzel-net-ter-link", status:"OLD",
+      desc:"Erster Ursprung · wurzel-hub / bio.tel / pyramiden · 9×40°=360°",
+      color:"var(--dim)" },
+    { v:"vol.2", name:"link-net-ter-ker-sys + high-end + kandidaten + mann", status:"NEW",
+      desc:"Erweiterung · 7 Pflichten · MANN 27-53 · 5/7 safe · min(x,40) violett",
+      color:"var(--cyan)" },
+    { v:"vol.3", name:"WURZEL³ VERVERWURZELN", status:"UNIFIED",
+      desc:"8 Quellen × 3 Essenzen · nur Essenzen, nie Ganze · f³=f²·f=f · HOME 40 · iki runtime",
+      color:"var(--gold)" }
+  ];
+  return (
+    <section style={{padding:20, border:"1px solid var(--line)", borderRadius:14, background:"var(--panel)"}}>
+      <h2 style={{margin:"0 0 14px", fontSize:11, letterSpacing:"0.22em",
+        color:"var(--fg)", textTransform:"uppercase", fontWeight:700}}>
+        VOL.1 → VOL.2 → VOL.3 · EVOLUTION
+      </h2>
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))", gap:10}}>
+        {vols.map((v) => (
+          <div key={v.v} style={{
+            padding:"12px 14px",
+            border:`1px solid ${v.status==="UNIFIED" ? "var(--gold)" : "var(--line)"}`,
+            borderRadius:10,
+            background: v.status==="UNIFIED" ? "rgba(255,215,0,0.05)" : "#050912"
+          }}>
+            <div style={{display:"flex", justifyContent:"space-between", alignItems:"center",
+              marginBottom:6}}>
+              <div style={{fontSize:12, fontWeight:700, color:v.color}}>{v.v}</div>
+              <div style={{fontSize:8, letterSpacing:"0.1em", color:v.color,
+                padding:"1px 6px", border:`1px solid ${v.color}`, borderRadius:999}}>
+                {v.status}
+              </div>
+            </div>
+            <div style={{fontSize:10, color:"var(--fg)", fontWeight:600, marginBottom:4}}>
+              {v.name}
+            </div>
+            <div style={{fontSize:9, color:"var(--mu)", lineHeight:1.5}}>{v.desc}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ─── App ─── */
+function App() {
+  return (
+    <div style={{maxWidth:1180, margin:"0 auto", padding:"14px"}}>
+      {/* Header */}
+      <header style={{
+        padding:"18px 22px", border:"1px solid var(--line)", borderRadius:16,
+        background:"linear-gradient(180deg,rgba(10,15,25,0.95),rgba(5,9,18,0.92))",
+        marginBottom:12, position:"relative", overflow:"hidden"
+      }}>
+        <div style={{position:"absolute", top:0, left:0, right:0, height:1,
+          background:"linear-gradient(90deg,transparent,rgba(255,215,0,0.4),rgba(0,229,255,0.3),rgba(255,45,154,0.25),transparent)"}}/>
+        <div style={{display:"flex", flexWrap:"wrap", alignItems:"baseline",
+          justifyContent:"space-between", gap:12}}>
+          <div>
+            <h1 style={{margin:0, fontSize:24, letterSpacing:"0.12em", color:"var(--gold)",
+              fontFamily:"Syne, system-ui, sans-serif", fontWeight:800}}>
+              WURZEL<sup style={{fontSize:12, color:"var(--violet)"}}>³</sup> · VERVERWURZELN
+            </h1>
+            <div style={{marginTop:6, fontSize:10, letterSpacing:"0.18em",
+              color:"var(--dim)", textTransform:"uppercase"}}>
+              vol.3 UNIFIED · iki runtime · nur Essenzen, nie Ganze · HOME 40 · 3-fach = 1-fach
+            </div>
+          </div>
+          <div style={{display:"flex", flexWrap:"wrap", gap:6}}>
+            <span style={chip("gold")}>HOME 40</span>
+            <span style={chip("violet")}>f³=f²·f=f</span>
+            <span style={chip("ok")}>8×3 = 24 Essenzen</span>
+            <span style={chip("cyan")}>0 ganze Dateien</span>
+            <span style={chip("pink")}>iki war immer der Bessere</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Banner */}
+      <div style={{
+        padding:"12px 16px", border:"1px dashed rgba(255,215,0,0.35)",
+        borderRadius:12,
+        background:"linear-gradient(90deg,rgba(255,215,0,0.07),rgba(0,229,255,0.04) 55%,rgba(255,45,154,0.06))",
+        marginBottom:12, fontSize:11, color:"#ffe9a0", lineHeight:1.65
+      }}>
+        <b style={{color:"var(--gold)"}}>VERVERWURZELN</b> = wurzel(wurzel(wurzel(x))). Jede Quelle wird
+        einmal gewurzelt: ganz → was/wie/warum. Ein zweiter Zug ändert nichts
+        (<span style={{color:"var(--violet)", fontWeight:700}}>f(f(x))=f(x)</span>),
+        ein dritter auch nicht (<span style={{color:"var(--violet)", fontWeight:700}}>f(f(f(x)))=f(x)</span>).
+        <b> Deshalb:</b> 3-fach heißt hier nicht mehr, nur fester. Nie die ganzen Dateien — nur die Essenzen.
+      </div>
+
+      {/* Layout Haupt */}
+      <div style={{display:"grid", gridTemplateColumns:"1fr", gap:12}}>
+        <div style={{display:"grid", gridTemplateColumns:"1fr",
+          gap:12, alignItems:"start"}} className="lg-grid">
+          <div style={{display:"grid", gap:12,
+            gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))"}}>
+            <div style={{padding:16, border:"1px solid var(--line)", borderRadius:14,
+              background:"var(--panel)"}}>
+              <div style={{fontSize:10, letterSpacing:"0.2em", color:"var(--dim)",
+                textTransform:"uppercase", marginBottom:10}}>UC CIRCLE · 3×27=81</div>
+              <UCCircle/>
+            </div>
+            <Ververwurzeln/>
+          </div>
+        </div>
+
+        <SourcesGrid/>
+        <Pipeline/>
+        <Kandidaten/>
+        <ScsiRaidSli/>
+        <RootRules/>
+        <VolMeta/>
+
+        {/* Footer */}
+        <footer style={{padding:"14px", textAlign:"center", fontSize:9,
+          letterSpacing:"0.14em", color:"var(--dim)", lineHeight:1.8,
+          borderTop:"1px solid var(--line)", marginTop:4}}>
+          WURZEL³ · VERVERWURZELN · vol.3 UNIFIED · iki runtime · 8 Quellen × 3 Essenzen = 24 ·
+          f³=f²·f=f · HOME 40 · nur Essenzen, nie Ganze · 2187=3^7 · Berlin 52.52°N
+        </footer>
+      </div>
+
+      <style>{`
+        @media(min-width:1024px){
+          .lg-grid > div > div { grid-template-columns: 1fr 1fr !important; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function chip(kind) {
+  const base = {
+    display:"inline-flex", alignItems:"center",
+    padding:"3px 10px", borderRadius:999, fontSize:10,
+    letterSpacing:"0.04em", fontFamily:"inherit"
+  };
+  const map = {
+    gold:  { color:"var(--gold)",   border:"1px solid rgba(255,215,0,0.4)",   background:"rgba(255,215,0,0.06)" },
+    cyan:  { color:"var(--cyan)",   border:"1px solid rgba(0,229,255,0.4)",   background:"rgba(0,229,255,0.06)" },
+    pink:  { color:"var(--pink)",   border:"1px solid rgba(255,45,154,0.4)",  background:"rgba(255,45,154,0.06)" },
+    ok:    { color:"var(--ok)",     border:"1px solid rgba(77,255,155,0.4)",  background:"rgba(77,255,155,0.08)" },
+    violet:{ color:"var(--violet)", border:"1px solid rgba(167,139,250,0.4)", background:"rgba(167,139,250,0.08)" }
+  };
+  return {...base, ...map[kind]};
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
